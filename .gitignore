@@ -2,3 +2,4 @@ dataset.csv
 .cache
 .idea
 __pycache__
+*.png
