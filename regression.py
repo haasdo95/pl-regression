@@ -6,11 +6,7 @@ import math
 from generator import generate_partitions
 
 
-# avoid recomputing regression on the same interval
-interval_cache = {}
-
-
-def regression_on_interval(data, interval):
+def regression_on_interval(data, interval, interval_cache):
     cache_entry = interval_cache.get(interval, None)
     if cache_entry is not None:
         return cache_entry
@@ -31,6 +27,9 @@ def regression_on_interval(data, interval):
 def piecewise_linear_regression(data, num_intervals, min_interval_len):
     print("number of data points: ", len(data))
     assert len(data) >= num_intervals * min_interval_len
+    # avoid recomputing regression on the same interval
+    interval_cache = {}
+
     partition_generator = generate_partitions(len(data), num_intervals, min_interval_len)
 
     lowest_sum_square_error = math.inf
@@ -38,7 +37,7 @@ def piecewise_linear_regression(data, num_intervals, min_interval_len):
     optimal_param = None
 
     for partition in partition_generator:  # a brute-force search for the optimal partition
-        interval_reg = [regression_on_interval(data, interval) for interval in partition]  # [(res, reg)]
+        interval_reg = [regression_on_interval(data, interval, interval_cache) for interval in partition]  # [(res, reg)]
         summary = reduce(
             lambda acc, x: (acc[0] + x[0], acc[1] + [x[1]]),
             interval_reg, (0, [])
@@ -49,3 +48,29 @@ def piecewise_linear_regression(data, num_intervals, min_interval_len):
             optimal_partition = partition
     assert optimal_partition is not None
     return optimal_partition, optimal_param
+
+
+def predict_one_point(x, reg):
+    x = np.reshape(x, (-1, 1))
+    y = reg.predict(x)
+    return y.item()
+
+
+def draw_regression_lines(ax, series, optimal_partition, optimal_param):
+    param = [(reg.coef_, reg.intercept_) for reg in optimal_param]
+    nodes = [(0, param[0][1])]  # put in first intercept
+    # inner nodes
+    for i in range(len(param) - 1):
+        node_x = (optimal_partition[i][1] + optimal_partition[i+1][0]) / 2
+        node_y = predict_one_point(node_x, optimal_param[i])
+        nodes.append((node_x, node_y))
+    # fill in last node
+    node_x = len(series) - 1
+    node_y = predict_one_point(node_x, optimal_param[-1])
+    nodes.append((node_x, node_y))
+    assert len(nodes) == len(optimal_param) + 1
+    # draw lines, actually
+    for i in range(len(param)):
+        x1, y1 = nodes[i]
+        x2, y2 = nodes[i+1]
+        ax.plot([x1, x2], [y1, y2], marker='o', color='g')
