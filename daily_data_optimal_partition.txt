@@ -1,0 +1,27 @@
+DJI（互联网泡沫）
+number of data points:  2431
+OPTIMAL PARTITION:  [(0, 709), (709, 1815), (1815, 2431)]
+DJI（经济大萧条）
+number of data points:  2530
+OPTIMAL PARTITION:  [(0, 1430), (1430, 1850), (1850, 2530)]
+DJI（87年，可能得省略）
+number of data points:  2477
+OPTIMAL PARTITION:  [(0, 1206), (1206, 1967), (1967, 2477)]
+DJI（08年金融危机）
+number of data points:  822
+OPTIMAL PARTITION:  [(0, 482), (482, 716), (716, 822)]
+N225（房地产泡沫）
+number of data points:  2876
+OPTIMAL PARTITION:  [(0, 1280), (1280, 2263), (2263, 2876)]
+CHL（智利金融危机）
+number of data points:  2858
+OPTIMAL PARTITION:  [(0, 875), (875, 1828), (1828, 2858)]
+China（中国08年）
+number of data points:  1468
+OPTIMAL PARTITION:  [(0, 932), (932, 1202), (1202, 1468)]
+HK（9798年东南亚危机）
+number of data points:  2596
+OPTIMAL PARTITION:  [(0, 968), (968, 2292), (2292, 2596)]
+China（中国15年）
+number of data points:  818
+OPTIMAL PARTITION:  [(0, 484), (484, 660), (660, 818)]

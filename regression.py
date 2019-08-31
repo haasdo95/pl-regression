@@ -24,13 +24,16 @@ def regression_on_interval(data, interval, interval_cache):
     return residual, reg
 
 
-def piecewise_linear_regression(data, num_intervals, min_interval_len):
+def piecewise_linear_regression(data, num_intervals, min_interval_len, op_partition=None):
     print("number of data points: ", len(data))
     assert len(data) >= num_intervals * min_interval_len
     # avoid recomputing regression on the same interval
     interval_cache = {}
 
-    partition_generator = generate_partitions(len(data), num_intervals, min_interval_len)
+    if op_partition is None:
+        partition_generator = generate_partitions(len(data), num_intervals, min_interval_len)
+    else:
+        partition_generator = [op_partition]
 
     lowest_sum_square_error = math.inf
     optimal_partition = None
@@ -48,6 +51,16 @@ def piecewise_linear_regression(data, num_intervals, min_interval_len):
             optimal_partition = partition
     assert optimal_partition is not None
     return optimal_partition, optimal_param
+
+
+def get_residual(data, optimal_partition, optimal_param):
+    residual = []
+    for par, reg in zip(optimal_partition, optimal_param):
+        start, end = par
+        for x in range(start, end):
+            y_hat = predict_one_point(x, reg)
+            residual.append(data[x] - y_hat)
+    return residual
 
 
 def predict_one_point(x, reg):
